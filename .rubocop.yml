@@ -1,0 +1,8 @@
+# RuboCop configuration for svc-recommender
+
+# Allow compact class/module notation (e.g., class Api::V1::RecommendationsController)
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+
