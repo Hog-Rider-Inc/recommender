@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
+  include ActionController::HttpAuthentication::Token::ControllerMethods
+
+  before_action :authenticate
+
   GENERIC_EXCEPTION_CODE = 1000
 
   rescue_from Exception, with: :exception_handler
@@ -23,5 +27,11 @@ class ApplicationController < ActionController::API
       message: exception.message,
       backtrace: backtrace,
     }
+  end
+
+  def authenticate
+    authenticate_or_request_with_http_token do |token, _options|
+      token == API_KEY
+    end
   end
 end

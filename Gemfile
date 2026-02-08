@@ -26,6 +26,7 @@ gem 'thruster', require: false
 
 gem 'interactor-initializer' # to be used for writing interactors
 gem 'active_model_serializers' # for object serialization
+gem 'dotenv-rails', groups: [:development, :test] # Load environment variables from .env
 
 group :development, :test do
   gem 'rspec'
