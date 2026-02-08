@@ -26,6 +26,7 @@ gem 'thruster', require: false
 
 gem 'interactor-initializer' # to be used for writing interactors
 gem 'active_model_serializers' # for object serialization
+gem 'sprockets-rails'
 
 group :development, :test do
   gem 'rspec'
