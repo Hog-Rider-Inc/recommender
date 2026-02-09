@@ -24,14 +24,16 @@ gem 'thruster', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
 
-gem 'interactor-initializer' # to be used for writing interactors
 gem 'active_model_serializers' # for object serialization
 gem 'dotenv-rails', groups: [:development, :test] # Load environment variables from .env
+gem 'interactor-initializer' # to be used for writing interactors
 
 group :development, :test do
+  gem 'brakeman'
+  gem 'bundler-audit'
+  gem 'factory_bot_rails' # for creating spec fixtures
   gem 'rspec'
   gem 'rspec-rails' # we skipped default testing framework for Rails and are using RSpec instead
-  gem 'factory_bot_rails' # for creating spec fixtures
 end
 
 group :development do
