@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -13,7 +15,7 @@ gem 'puma', '>= 5.0'
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[ windows jruby ]
+gem 'tzinfo-data', platforms: %i[windows jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
@@ -25,7 +27,7 @@ gem 'thruster', require: false
 # gem "rack-cors"
 
 gem 'active_model_serializers' # for object serialization
-gem 'dotenv-rails', groups: [:development, :test] # Load environment variables from .env
+gem 'dotenv-rails', groups: %i[development test] # Load environment variables from .env
 gem 'interactor-initializer' # to be used for writing interactors
 
 group :development, :test do

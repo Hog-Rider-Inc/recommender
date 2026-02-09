@@ -25,7 +25,7 @@ class ApplicationController < ActionController::API
     {
       code: exception.try(:code) || GENERIC_EXCEPTION_CODE,
       message: exception.message,
-      backtrace: backtrace,
+      backtrace: backtrace
     }
   end
 
