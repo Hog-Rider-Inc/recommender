@@ -1,8 +1,30 @@
-# RuboCop configuration for svc-recommender
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  Exclude:
+    - 'bin/*'
+    - 'db/schema.rb'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
 
-# Allow compact class/module notation (e.g., class Api::V1::RecommendationsController)
-Style/ClassAndModuleChildren:
-  Enabled: false
 Style/Documentation:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'config/routes.rb'
+    - 'config/environments/*.rb'
+
+Metrics/MethodLength:
+  Max: 15
+  Exclude:
+    - 'db/migrate/*'
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'config/initializers/*'
