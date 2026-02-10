@@ -65,5 +65,10 @@ Rails.application.configure do
   # ]
   #
   # Skip DNS rebinding protection for the default health check endpoint.
+
+  config.hosts << /.*\.onrender\.com\z/
+
+  config.hosts << ENV['ALLOWED_HOST'] if ENV['ALLOWED_HOST']
+
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

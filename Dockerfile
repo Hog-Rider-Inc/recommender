@@ -1,5 +1,7 @@
 FROM ruby:3.2
 
+ENV RAILS_ENV=production
+
 WORKDIR /app
 
 COPY Gemfile Gemfile.lock ./
