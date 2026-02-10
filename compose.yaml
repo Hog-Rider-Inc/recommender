@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    environment:
+      - RAILS_MASTER_KEY
+    ports:
+      - "3000:80"

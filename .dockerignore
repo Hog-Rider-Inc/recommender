@@ -1,0 +1,9 @@
+/.bundle
+/.git
+/log/*
+/tmp
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+/spec
+/reports
