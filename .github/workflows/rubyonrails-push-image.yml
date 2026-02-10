@@ -1,11 +1,14 @@
 name: Build and Push Rails Image
 
 on:
-  push:
-    branches: [ "prod" ]
+  workflow_run:
+    workflows: ["Ruby on Rails CI"]
+    types:
+      - completed
 
 jobs:
   build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,8 +28,8 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t ghcr.io/hog-rider-inc/svc-recommender/svc-recommender:latest .
+          docker build -t ghcr.io/hog-rider-inc/svc-recommender:latest .
 
       - name: Push image
         run: |
-          docker push ghcr.io/hog-rider-inc/svc-recommender/svc-recommender:latest
+          docker push ghcr.io/hog-rider-inc/svc-recommender:latest
