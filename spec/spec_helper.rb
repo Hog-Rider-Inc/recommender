@@ -92,3 +92,8 @@ RSpec.configure do |config|
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
 end
+
+# WebMock Config
+require 'webmock/rspec'
+
+WebMock.disable_net_connect!(allow_localhost: true)
