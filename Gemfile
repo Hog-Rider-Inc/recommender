@@ -28,6 +28,8 @@ gem 'thruster', require: false
 
 gem 'active_model_serializers' # for object serialization
 gem 'dotenv-rails', groups: %i[development test] # Load environment variables from .env
+gem 'faraday'
+gem 'faraday-net_http'
 gem 'interactor-initializer' # to be used for writing interactors
 
 group :development, :test do
@@ -36,6 +38,7 @@ group :development, :test do
   gem 'factory_bot_rails' # for creating spec fixtures
   gem 'rspec'
   gem 'rspec-rails' # we skipped default testing framework for Rails and are using RSpec instead
+  gem 'webmock'
 end
 
 group :development do
