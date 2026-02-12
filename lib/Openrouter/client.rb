@@ -6,7 +6,7 @@ class Openrouter::Client
     begin
       response = connection.post('', request_body(prompt)).body
     rescue StandardError => e
-      raise Faraday::Error.new(e.message) unless e.response && e.response[:status] == 429 && retries < 4
+      raise Faraday::Error, e.message unless e.response && e.response[:status] == 429 && retries < 4
 
       retries += 1
       sleep(3)
@@ -15,7 +15,6 @@ class Openrouter::Client
 
     response['choices'][0]['message']['content']
   end
-
 
   private
 

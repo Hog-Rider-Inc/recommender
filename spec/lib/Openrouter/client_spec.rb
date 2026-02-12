@@ -18,7 +18,7 @@ RSpec.describe Openrouter::Client do
         .with(
           headers: {
             'Authorization' => /Bearer .+/,
-            'Content-Type' => 'application/json',
+            'Content-Type' => 'application/json'
           }
         )
         .to_return(
