@@ -14,7 +14,11 @@ RSpec.describe Openrouter::Client do
     let(:response_body) { { id: 'test-id', choices: [{ message: { content: 'Labas, kaip sekasi?' } }] } }
 
     before do
-      stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
+      allow(ENV).to receive(:fetch).with('OPENROUTER_URL').and_return('https://ai.com/chat')
+      allow(ENV).to receive(:fetch).with('OPENROUTER_API_KEY').and_return('test-api-key')
+      allow(ENV).to receive(:fetch).with('OPENROUTER_AI_MODEL').and_return('test-model')
+
+      stub_request(:post, 'https://ai.com/chat')
         .with(
           headers: {
             'Authorization' => /Bearer .+/,
