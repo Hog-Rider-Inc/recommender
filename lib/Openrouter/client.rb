@@ -3,19 +3,19 @@
 class Openrouter::Client
   def post(prompt)
     retries = 0
-    begin
-      response = connection.post('', request_body(prompt)).body
-    rescue StandardError => e
-      unless e.respond_to?(:response) && e.response && e.response[:status] == 429 && retries < 4
-        raise Faraday::Error, e.message
+    loop do
+      http_response = connection.post('', request_body(prompt))
+
+      if http_response.status == 429 && retries < 4
+        retries += 1
+        sleep(3)
+        next
       end
 
-      retries += 1
-      sleep(3)
-      retry
+      return http_response.body['choices'][0]['message']['content']
+    rescue StandardError => e
+      raise Faraday::Error, e.message
     end
-
-    response['choices'][0]['message']['content']
   end
 
   private

@@ -45,5 +45,32 @@ RSpec.describe Openrouter::Client do
         expect { client.post(prompt) }.to raise_error(Faraday::Error, 'test error')
       end
     end
+
+    context 'when request is rate limited with 429 responses' do
+      let(:rate_limited_stub) do
+        stub_request(:post, 'https://ai.com/chat')
+          .with(
+            headers: {
+              'Authorization' => /Bearer .+/,
+              'Content-Type' => 'application/json'
+            }
+          )
+          .to_return(
+            { status: 429, headers: { 'Content-Type' => 'application/json' } },
+            { status: 429, headers: { 'Content-Type' => 'application/json' } },
+            { status: 200, body: response_body.to_json, headers: { 'Content-Type' => 'application/json' } }
+          )
+      end
+      before do
+        rate_limited_stub
+        allow(client).to receive(:sleep)
+      end
+      it 'retries on 429 and eventually returns response' do
+        response = client.post(prompt)
+        expect(response).to eq('Labas, kaip sekasi?')
+        expect(client).to have_received(:sleep).with(3).twice
+        expect(rate_limited_stub).to have_been_requested.times(3)
+      end
+    end
   end
 end
