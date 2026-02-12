@@ -4,12 +4,7 @@ RSpec.describe Openrouter::Client do
   let(:client) { described_class.new }
 
   describe '#post' do
-    let(:messages) do
-      [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: 'Hello. Labas.' }
-      ]
-    end
+    let(:prompt) { 'Hello. Labas' }
 
     let(:response_body) { { id: 'test-id', choices: [{ message: { content: 'Labas, kaip sekasi?' } }] } }
 
@@ -33,7 +28,7 @@ RSpec.describe Openrouter::Client do
     end
 
     it 'makes a request and returns response' do
-      response = client.post(messages)
+      response = client.post(prompt)
 
       expect(response).to eq('Labas, kaip sekasi?')
     end
@@ -47,7 +42,7 @@ RSpec.describe Openrouter::Client do
       end
 
       it 'raises an error' do
-        expect { client.post(messages) }.to raise_error(Faraday::Error, 'test error')
+        expect { client.post(prompt) }.to raise_error(Faraday::Error, 'test error')
       end
     end
   end
