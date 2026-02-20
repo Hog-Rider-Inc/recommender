@@ -12,6 +12,9 @@ Style/Documentation:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/**/*'
 
 Style/ClassAndModuleChildren:
   Enabled: false
