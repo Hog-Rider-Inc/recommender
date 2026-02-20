@@ -5,9 +5,9 @@ class Api::Users::RecommendationsController < ApplicationController
     @recommendations = UserRecommendation.recent_for_user(user_id).pluck(:item_id)
 
     if @recommendations.empty?
-      render json: {}, status: :not_found
+      render json: [], status: :not_found
     else
-      render json: { item_ids: @recommendations }, status: :ok
+      render json: @recommendations, status: :ok
     end
   end
 
