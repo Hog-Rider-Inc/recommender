@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V1::Users::RecommendationsController < ApplicationController
+class Api::Users::RecommendationsController < ApplicationController
   def index
     @recommendations = UserRecommendation.recent_for_user(user_id).pluck(:item_id)
 
