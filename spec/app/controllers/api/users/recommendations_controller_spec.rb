@@ -22,13 +22,13 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
         it 'returns 200 with item_ids' do
           get "/api/users/#{user_id}/recommendations", headers: valid_headers
           expect(response).to have_http_status(:ok)
-          expect(JSON.parse(response.body)).to match_array([10, 20])
+          expect(JSON.parse(response.body)['item_ids']).to match_array([10, 20])
         end
 
         it 'does not return recommendations for other users' do
           UserRecommendation.create!(user_id: 999, item_id: 99)
           get "/api/users/#{user_id}/recommendations", headers: valid_headers
-          expect(JSON.parse(response.body)).not_to include(99)
+          expect(JSON.parse(response.body)['item_ids']).not_to include(99)
         end
       end
 
