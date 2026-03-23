@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :api do
     resources :users, only: [] do
-      resources :recommendations, only: [:index], controller: 'users/recommendations'
+      resources :recommendations, only: %i[index create], controller: 'users/recommendations'
     end
   end
 end
