@@ -8,9 +8,7 @@ class Api::Users::RecommendationsController < ApplicationController
       end
     end
 
-    render json: {
-      data: recommendations.map { |rec| serialize_menu_item(rec.menu_item) }
-    }, status: :ok
+    render json: recommendations.map { |rec| serialize_menu_item(rec.menu_item) }, status: :ok
   end
 
   private
@@ -26,6 +24,7 @@ class Api::Users::RecommendationsController < ApplicationController
     image_url = menu_item.menu_item_images.order(created_at: :desc).limit(1).pick(:image_url)
 
     {
+      menu_item_id: menu_item.id,
       title: menu_item.name,
       restaurant_name: restaurant&.name,
       price: menu_item.price,

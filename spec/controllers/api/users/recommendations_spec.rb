@@ -35,8 +35,8 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
     make_request
 
     body = JSON.parse(response.body)
-    keys = body.fetch('data').first.keys.sort
-    expect(keys).to eq(%w[categories dietary_tags image_url price restaurant_name title])
+    keys = body.first.keys.sort
+    expect(keys).to eq(%w[categories dietary_tags image_url menu_item_id price restaurant_name title])
   end
 
   it 'includes categories and dietary_tags arrays' do
@@ -48,7 +48,7 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
 
     make_request
 
-    payload = JSON.parse(response.body).fetch('data').first
+    payload = JSON.parse(response.body).first
     expect(payload.fetch('categories')).to eq(['Burgers'])
     expect(payload.fetch('dietary_tags')).to eq(['Vegan'])
   end
