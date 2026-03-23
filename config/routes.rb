@@ -11,7 +11,16 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :api do
     resources :users, only: [] do
-      resources :recommendations, only: %i[index create], controller: 'users/recommendations'
+      resources :recommendations, only: %i[index create], controller: 'users/recommendations' do
+        collection do
+          resource :item_interactions, only: %i[show], controller: 'users/item_interactions'
+        end
+      end
+
+      resource :item_interactions, only: %i[show], controller: 'users/item_interactions' do
+        post ':menu_item_id/like', action: :like, on: :collection
+        post ':menu_item_id/dislike', action: :dislike, on: :collection
+      end
     end
   end
 end
