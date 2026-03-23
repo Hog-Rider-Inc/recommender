@@ -11,6 +11,10 @@ class Api::Users::RecommendationsController < ApplicationController
     render json: recommendations.map { |rec| serialize_menu_item(rec.menu_item) }, status: :ok
   end
 
+  def create
+    render json: {}, status: :ok
+  end
+
   private
 
   def user_id
