@@ -2,12 +2,52 @@
 
 class Api::Users::RecommendationsController < ApplicationController
   def index
-    render json: {}, status: :ok
+    ClientRecommendation.transaction do
+      recommendations.each_with_index do |rec, i|
+        rec.update_columns(updated_at: Time.current + i)
+      end
+    end
+
+    render json: {
+      data: recommendations.map { |rec| serialize_menu_item(rec.menu_item) }
+    }, status: :ok
   end
 
   private
 
   def user_id
     params[:user_id]
+  end
+
+  def serialize_menu_item(menu_item)
+    return nil unless menu_item
+
+    restaurant = menu_item.restaurant
+    image_url = menu_item.menu_item_images.order(created_at: :desc).limit(1).pick(:image_url)
+
+    {
+      title: menu_item.name,
+      restaurant_name: restaurant&.name,
+      price: menu_item.price,
+      image_url: image_url,
+      categories: menu_item.categories.order(:title).pluck(:title),
+      dietary_tags: menu_item.dietary_tags.order(:title).pluck(:title)
+    }
+  end
+
+  def client
+    @client ||= Client.find(user_id)
+  end
+
+  def recommendations
+    @recommendations ||= ClientRecommendation
+                         .includes(menu_item: [
+                                     :categories,
+                                     :dietary_tags,
+                                     { restaurant: [], menu_item_images: [] }
+                                   ])
+                         .where(client_id: client.id)
+                         .order(updated_at: :desc, id: :desc)
+                         .limit(3)
   end
 end

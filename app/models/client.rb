@@ -22,6 +22,8 @@ class Client < ApplicationRecord
            dependent: :destroy
   has_many :recommended_menu_items, through: :client_recommendations, source: :menu_item
 
+  has_many :reviews, class_name: 'Review', foreign_key: :client_id, inverse_of: :client, dependent: :destroy
+
   validates :first_name, :last_name, presence: true
   validates :account_id, presence: true, uniqueness: true
   validates :phone_number, uniqueness: true, allow_nil: true
