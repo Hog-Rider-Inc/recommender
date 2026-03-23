@@ -14,6 +14,11 @@ gem 'puma', '>= 5.0'
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
+# Security pins for transitive dependencies (bundler-audit)
+gem 'action_text-trix', '>= 2.1.17'
+gem 'nokogiri', '>= 1.19.1'
+gem 'rack', '>= 3.2.5'
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[windows jruby]
 
