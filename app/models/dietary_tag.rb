@@ -12,4 +12,3 @@ class DietaryTag < ApplicationRecord
 
   validates :title, presence: true
 end
-

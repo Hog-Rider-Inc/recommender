@@ -12,8 +12,9 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
     Account.create!(email: 'r@example.com', username: 'r', password_hash: 'x', account_type: 'restaurant')
   end
   let!(:address) { Address.create!(country: 'LT', city: 'Vilnius', street: 's', postal_code: '1') }
-  let!(:restaurant) {
- Restaurant.create!(account: restaurant_account, address: address, name: 'Rest', phone_number: '123') }
+  let!(:restaurant) do
+    Restaurant.create!(account: restaurant_account, address: address, name: 'Rest', phone_number: '123')
+  end
 
   let!(:menu_item) { MenuItem.create!(restaurant: restaurant, name: 'Dish', description: 'd', price: 9.99) }
 

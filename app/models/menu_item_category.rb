@@ -9,4 +9,3 @@ class MenuItemCategory < ApplicationRecord
   validates :menu_item_id, presence: true
   validates :category_id, presence: true
 end
-

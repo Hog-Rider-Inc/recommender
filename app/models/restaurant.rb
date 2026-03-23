@@ -9,7 +9,7 @@ class Restaurant < ApplicationRecord
   has_many :menu_items, class_name: 'MenuItem', foreign_key: :restaurant_id, inverse_of: :restaurant,
                         dependent: :destroy
   has_many :orders, class_name: 'Order', foreign_key: :restaurant_id, inverse_of: :restaurant, dependent: :destroy
-  has_many :reviews, class_name: "Review", foreign_key: :restaurant_id, inverse_of: :restaurant, dependent: :destroy
+  has_many :reviews, class_name: 'Review', foreign_key: :restaurant_id, inverse_of: :restaurant, dependent: :destroy
 
   validates :name, presence: true
   validates :phone_number, presence: true

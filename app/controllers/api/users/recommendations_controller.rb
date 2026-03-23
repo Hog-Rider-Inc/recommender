@@ -2,18 +2,6 @@
 
 class Api::Users::RecommendationsController < ApplicationController
   def index
-    client = Client.find(user_id)
-
-    recommendations = ClientRecommendation
-                      .includes(menu_item: [
-                        :categories,
-                        :dietary_tags,
-                        { restaurant: [], menu_item_images: [] }
-                      ])
-                      .where(client_id: client.id)
-                      .order(updated_at: :desc, id: :desc)
-                      .limit(3)
-
     ClientRecommendation.transaction do
       recommendations.each_with_index do |rec, i|
         rec.update_columns(updated_at: Time.current + i)
@@ -45,5 +33,21 @@ class Api::Users::RecommendationsController < ApplicationController
       categories: menu_item.categories.order(:title).pluck(:title),
       dietary_tags: menu_item.dietary_tags.order(:title).pluck(:title)
     }
+  end
+
+  def client
+    @client ||= Client.find(user_id)
+  end
+
+  def recommendations
+    @recommendations ||= ClientRecommendation
+                         .includes(menu_item: [
+                                     :categories,
+                                     :dietary_tags,
+                                     { restaurant: [], menu_item_images: [] }
+                                   ])
+                         .where(client_id: client.id)
+                         .order(updated_at: :desc, id: :desc)
+                         .limit(3)
   end
 end
