@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_23_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_23_183340) do
   create_table "Accounts", id: { type: :bigint, unsigned: true }, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.column "account_type", "enum('client','restaurant')", null: false
     t.datetime "created_at", null: false
@@ -81,6 +81,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000000) do
     t.index ["phone_number"], name: "clients_phone_number_unique", unique: true
   end
 
+  create_table "DietaryTags", id: { type: :bigint, unsigned: true }, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "MenuItemCategories", id: { type: :bigint, unsigned: true }, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "category_id", null: false, unsigned: true
     t.datetime "created_at", null: false
@@ -88,6 +94,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000000) do
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "menuitemcategories_category_id_index"
     t.index ["menu_item_id", "category_id"], name: "menuitemcategories_menu_item_id_category_id_unique", unique: true
+  end
+
+  create_table "MenuItemDietaryTags", id: { type: :bigint, unsigned: true }, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "dietary_tag_id", null: false, unsigned: true
+    t.bigint "menu_item_id", null: false, unsigned: true
+    t.datetime "updated_at", null: false
+    t.index ["dietary_tag_id"], name: "menuitemdietarytags_dietary_tag_id_index"
+    t.index ["menu_item_id", "dietary_tag_id"], name: "menuitemdietarytags_menu_item_id_dietary_tag_id_unique", unique: true
   end
 
   create_table "MenuItemImages", id: { type: :bigint, unsigned: true }, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -169,14 +184,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000000) do
     t.index ["restaurant_id"], name: "reviews_restaurant_id_index"
   end
 
-  create_table "user_recommendations", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "item_id", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "idx_user_id"
-  end
-
   add_foreign_key "ClientFavourites", "Clients", column: "client_id", name: "clientfavourites_client_id_foreign"
   add_foreign_key "ClientFavourites", "MenuItems", column: "menu_item_id", name: "clientfavourites_menu_item_id_foreign"
   add_foreign_key "ClientItemInteractions", "Clients", column: "client_id", name: "clientiteminteractions_client_id_foreign"
@@ -187,6 +194,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000000) do
   add_foreign_key "Clients", "Address", column: "address_id", name: "clients_address_id_foreign"
   add_foreign_key "MenuItemCategories", "Categories", column: "category_id", name: "menuitemcategories_category_id_foreign"
   add_foreign_key "MenuItemCategories", "MenuItems", column: "menu_item_id", name: "menuitemcategories_menu_item_id_foreign"
+  add_foreign_key "MenuItemDietaryTags", "DietaryTags", column: "dietary_tag_id", name: "menuitemdietarytags_dietary_tag_id_foreign"
+  add_foreign_key "MenuItemDietaryTags", "MenuItems", column: "menu_item_id", name: "menuitemdietarytags_menu_item_id_foreign"
   add_foreign_key "MenuItemImages", "MenuItems", column: "menu_item_id", name: "menuitemimages_menu_item_id_foreign"
   add_foreign_key "MenuItems", "Restaurants", column: "restaurant_id", name: "menuitems_restaurant_id_foreign"
   add_foreign_key "OrderMenuItems", "MenuItems", column: "menu_item_id", name: "ordermenuitems_menu_item_id_foreign"
