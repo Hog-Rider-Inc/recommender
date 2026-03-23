@@ -24,6 +24,26 @@ class MenuItem < ApplicationRecord
            inverse_of: :menu_item,
            dependent: :destroy
 
+  has_many :menu_item_images,
+           class_name: 'MenuItemImage',
+           foreign_key: :menu_item_id,
+           inverse_of: :menu_item,
+           dependent: :destroy
+
+  has_many :menu_item_categories,
+           class_name: 'MenuItemCategory',
+           foreign_key: :menu_item_id,
+           inverse_of: :menu_item,
+           dependent: :destroy
+  has_many :categories, through: :menu_item_categories, source: :category
+
+  has_many :menu_item_dietary_tags,
+           class_name: 'MenuItemDietaryTag',
+           foreign_key: :menu_item_id,
+           inverse_of: :menu_item,
+           dependent: :destroy
+  has_many :dietary_tags, through: :menu_item_dietary_tags, source: :dietary_tag
+
   validates :restaurant_id, presence: true
   validates :name, presence: true
   validates :description, presence: true
