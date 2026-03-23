@@ -1,5 +1,5 @@
 # rubocop:disable Metrics/ClassLength
-class CreateInitialSchema < ActiveRecord::Migration[8.1]
+class InitialSchema < ActiveRecord::Migration[8.1]
   def up
     statements = [
       # Tables + indexes/uniques
@@ -223,6 +223,28 @@ class CreateInitialSchema < ActiveRecord::Migration[8.1]
           ADD UNIQUE `menuitemcategories_menu_item_id_category_id_unique` (`menu_item_id`, `category_id`),
           ADD INDEX `menuitemcategories_category_id_index` (`category_id`)
       SQL
+      <<~SQL,
+        CREATE TABLE `DietaryTags` (
+          `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `title` VARCHAR(255) NOT NULL,
+          `updated_at` DATETIME(6) NOT NULL,
+          `created_at` DATETIME(6) NOT NULL
+        )
+      SQL
+      <<~SQL,
+        CREATE TABLE `MenuItemDietaryTags` (
+          `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          `menu_item_id` BIGINT UNSIGNED NOT NULL,
+          `dietary_tag_id` BIGINT UNSIGNED NOT NULL,
+          `updated_at` DATETIME(6) NOT NULL,
+          `created_at` DATETIME(6) NOT NULL
+        )
+      SQL
+      <<~SQL,
+        ALTER TABLE `MenuItemDietaryTags`
+          ADD UNIQUE `menuitemdietarytags_menu_item_id_dietary_tag_id_unique` (`menu_item_id`, `dietary_tag_id`),
+          ADD INDEX `menuitemdietarytags_dietary_tag_id_index` (`dietary_tag_id`)
+      SQL
 
       # Foreign keys
       <<~SQL,
@@ -313,9 +335,17 @@ class CreateInitialSchema < ActiveRecord::Migration[8.1]
         ALTER TABLE `RestaurantLogoImages`
           ADD CONSTRAINT `restaurantlogoimages_restaurant_id_foreign` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`id`)
       SQL
-      <<~SQL
+      <<~SQL,
         ALTER TABLE `Orders`
           ADD CONSTRAINT `orders_address_id_foreign` FOREIGN KEY (`address_id`) REFERENCES `Address` (`id`)
+      SQL
+      <<~SQL,
+        ALTER TABLE `MenuItemDietaryTags`
+          ADD CONSTRAINT `menuitemdietarytags_menu_item_id_foreign` FOREIGN KEY (`menu_item_id`) REFERENCES `MenuItems` (`id`)
+      SQL
+      <<~SQL
+        ALTER TABLE `MenuItemDietaryTags`
+          ADD CONSTRAINT `menuitemdietarytags_dietary_tag_id_foreign` FOREIGN KEY (`dietary_tag_id`) REFERENCES `DietaryTags` (`id`)
       SQL
     ]
 
@@ -324,6 +354,15 @@ class CreateInitialSchema < ActiveRecord::Migration[8.1]
 
   def down
     statements = [
+      # Dietary tags FKs
+      <<~SQL,
+        ALTER TABLE `MenuItemDietaryTags` DROP FOREIGN KEY `menuitemdietarytags_dietary_tag_id_foreign`
+      SQL
+      <<~SQL,
+        ALTER TABLE `MenuItemDietaryTags` DROP FOREIGN KEY `menuitemdietarytags_menu_item_id_foreign`
+      SQL
+
+      # Other foreign keys
       <<~SQL,
         ALTER TABLE `Orders` DROP FOREIGN KEY `orders_address_id_foreign`
       SQL
@@ -393,6 +432,16 @@ class CreateInitialSchema < ActiveRecord::Migration[8.1]
       <<~SQL,
         ALTER TABLE `Reviews` DROP FOREIGN KEY `reviews_order_id_foreign`
       SQL
+
+      # Drop join/tag tables before MenuItems
+      <<~SQL,
+        DROP TABLE IF EXISTS `MenuItemDietaryTags`
+      SQL
+      <<~SQL,
+        DROP TABLE IF EXISTS `DietaryTags`
+      SQL
+
+      # Drop remaining tables
       <<~SQL,
         DROP TABLE IF EXISTS `MenuItemCategories`
       SQL
