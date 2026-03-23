@@ -21,8 +21,8 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
 
   let(:headers) { { 'Authorization' => "Token token=#{API_KEY}" } }
 
-  describe 'GET /api/users/:user_id/item_interactions' do
-    let(:path) { "/api/users/#{client.id}/item_interactions" }
+  describe 'GET /api/users/:user_id/recommendations/item_interactions' do
+    let(:path) { "/api/users/#{client.id}/recommendations/item_interactions" }
 
     it 'returns one random unseen item' do
       get path, headers: headers
@@ -44,8 +44,8 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
     end
   end
 
-  describe 'POST /api/users/:user_id/item_interactions/:menu_item_id/like' do
-    let(:path) { "/api/users/#{client.id}/item_interactions/#{menu_item_one.id}/like" }
+  describe 'POST /api/users/:user_id/recommendations/item_interactions/:menu_item_id/like' do
+    let(:path) { "/api/users/#{client.id}/recommendations/item_interactions/#{menu_item_one.id}/like" }
 
     it 'stores like interaction and creates recommendation' do
       post path, headers: headers
@@ -59,8 +59,8 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
     end
   end
 
-  describe 'POST /api/users/:user_id/item_interactions/:menu_item_id/dislike' do
-    let(:path) { "/api/users/#{client.id}/item_interactions/#{menu_item_one.id}/dislike" }
+  describe 'POST /api/users/:user_id/recommendations/item_interactions/:menu_item_id/dislike' do
+    let(:path) { "/api/users/#{client.id}/recommendations/item_interactions/#{menu_item_one.id}/dislike" }
 
     it 'stores dislike interaction and removes recommendation if present' do
       ClientRecommendation.create!(client: client, menu_item: menu_item_one)
