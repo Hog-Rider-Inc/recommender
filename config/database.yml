@@ -51,6 +51,6 @@ test:
 #
 production:
   <<: *default
-  database: svc_recommender_production
+  database: svc_hog_production
   username: avnadmin
   password: <%= ENV["SVC_RECOMMENDER_DATABASE_PASSWORD"] %>
