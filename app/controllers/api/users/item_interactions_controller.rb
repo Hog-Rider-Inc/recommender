@@ -21,7 +21,6 @@ class Api::Users::ItemInteractionsController < ApplicationController
     render json: {}, status: :ok
   end
 
-  # rubocop:disable Metrics/AbcSize
   def dislike
     menu_item = MenuItem.find(params[:menu_item_id])
 
@@ -33,7 +32,6 @@ class Api::Users::ItemInteractionsController < ApplicationController
 
     render json: {}, status: :ok
   end
-  # rubocop:enable Metrics/AbcSize
 
   private
 
