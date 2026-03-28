@@ -4,9 +4,11 @@ RSpec.describe Openrouter::Client do
   let(:client) { described_class.new }
 
   describe '#post' do
-    let(:prompt) { 'Hello. Labas' }
+    let(:messages) { [{ role: 'user', content: 'Hello' }] }
 
-    let(:response_body) { { id: 'test-id', choices: [{ message: { content: 'Labas, kaip sekasi?' } }] } }
+    let(:response_body) do
+      { 'id' => 'test-id', 'choices' => [{ 'message' => { 'content' => 'Labas, kaip sekasi?' } }] }
+    end
 
     before do
       allow(ENV).to receive(:fetch).with('OPENROUTER_URL').and_return('https://ai.com/chat')
@@ -27,10 +29,10 @@ RSpec.describe Openrouter::Client do
         )
     end
 
-    it 'makes a request and returns response' do
-      response = client.post(prompt)
+    it 'makes a request and returns response body' do
+      response = client.post(messages: messages)
 
-      expect(response).to eq('Labas, kaip sekasi?')
+      expect(response).to eq(response_body)
     end
 
     context 'when request fails' do
@@ -42,7 +44,7 @@ RSpec.describe Openrouter::Client do
       end
 
       it 'raises an error' do
-        expect { client.post(prompt) }.to raise_error(Faraday::Error, 'test error')
+        expect { client.post(messages: messages) }.to raise_error(Faraday::Error, 'test error')
       end
     end
 
@@ -61,13 +63,16 @@ RSpec.describe Openrouter::Client do
             { status: 200, body: response_body.to_json, headers: { 'Content-Type' => 'application/json' } }
           )
       end
+
       before do
         rate_limited_stub
         allow(client).to receive(:sleep)
       end
+
       it 'retries on 429 and eventually returns response' do
-        response = client.post(prompt)
-        expect(response).to eq('Labas, kaip sekasi?')
+        response = client.post(messages: messages)
+
+        expect(response).to eq(response_body)
         expect(client).to have_received(:sleep).with(3).twice
         expect(rate_limited_stub).to have_been_requested.times(3)
       end

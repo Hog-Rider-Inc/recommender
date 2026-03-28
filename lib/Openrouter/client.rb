@@ -1,52 +1,56 @@
 # frozen_string_literal: true
 
 class Openrouter::Client
-  def post(prompt)
+  def post(messages:, response_format: nil, temperature: Openrouter.config.temperature,
+           max_tokens: Openrouter.config.max_tokens)
+    request_body = build_request_body(
+      messages: messages,
+      response_format: response_format,
+      temperature: temperature,
+      max_tokens: max_tokens
+    )
+
+    post_with_retries(request_body)
+  end
+
+  private
+
+  def build_request_body(messages:, response_format:, temperature:, max_tokens:)
+    body = {
+      model: Openrouter.config.model,
+      messages: messages,
+      temperature: temperature,
+      max_tokens: max_tokens
+    }
+    body[:response_format] = response_format if response_format
+    body
+  end
+
+  def post_with_retries(request_body)
     retries = 0
+
     loop do
-      http_response = connection.post('', request_body(prompt))
+      http_response = connection.post('', request_body)
+      return http_response.body unless retryable?(http_response.status, retries)
 
-      if http_response.status == 429 && retries < 4
-        retries += 1
-        sleep(3)
-        next
-      end
-
-      return http_response.body['choices'][0]['message']['content']
+      retries += 1
+      sleep(3)
     rescue StandardError => e
       raise Faraday::Error, e.message
     end
   end
 
-  private
+  def retryable?(status, retries)
+    status == 429 && retries < 4
+  end
 
   def connection
-    @connection ||= Faraday.new(url) do |f|
+    @connection ||= Faraday.new(Openrouter.config.url) do |f|
       f.request :json
       f.response :json
       f.headers['Content-Type'] = 'application/json'
-      f.headers['Authorization'] = "Bearer #{config.bearer_token}"
+      f.headers['Authorization'] = "Bearer #{Openrouter.config.bearer_token}"
       f.adapter Faraday.default_adapter
     end
-  end
-
-  def config
-    Openrouter.config
-  end
-
-  def url
-    config.url
-  end
-
-  def request_body(prompt)
-    {
-      model: config.model,
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.0,
-      max_tokens: 300
-    }
   end
 end
