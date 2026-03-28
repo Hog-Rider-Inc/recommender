@@ -18,6 +18,8 @@ class Api::Users::ItemInteractionsController < ApplicationController
 
     ClientRecommendation.find_or_create_by!(client_id: client.id, menu_item_id: menu_item.id)
 
+    enqueue_recommendations_refresh_if_needed!
+
     render json: {}, status: :ok
   end
 
@@ -29,6 +31,8 @@ class Api::Users::ItemInteractionsController < ApplicationController
     interaction.save!
 
     ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item.id).delete_all
+
+    enqueue_recommendations_refresh_if_needed!
 
     render json: {}, status: :ok
   end
@@ -58,8 +62,7 @@ class Api::Users::ItemInteractionsController < ApplicationController
     }
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def random_unseen_menu_item
+  def random_unseen_menu_item # rubocop:disable Metrics/AbcSize
     seen_ids = ClientItemInteraction.where(client_id: client.id).select(:menu_item_id)
     recommended_ids = ClientRecommendation.where(client_id: client.id).select(:menu_item_id)
 
@@ -71,5 +74,10 @@ class Api::Users::ItemInteractionsController < ApplicationController
       .limit(1)
       .first
   end
-  # rubocop:enable Metrics/AbcSize
+
+  def enqueue_recommendations_refresh_if_needed!
+    return unless (ClientItemInteraction.where(client_id: client.id).count % 5).zero?
+
+    Recommendations::NextUserFavouritesJob.perform_later(user_id)
+  end
 end
