@@ -6,6 +6,7 @@ class Api::Users::RecommendationsController < ApplicationController
   end
 
   def create
+    Recommendations::NextUserFavouritesJob.perform_later(user_id)
     render json: {}, status: :ok
   end
 

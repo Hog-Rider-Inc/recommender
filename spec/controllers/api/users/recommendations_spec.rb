@@ -57,11 +57,16 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
   describe 'POST /api/users/:user_id/recommendations' do
     subject(:make_request) { post path, headers: headers }
 
+    before do
+      allow(Recommendations::NextUserFavouritesJob).to receive(:perform_later)
+    end
+
     it 'returns 200 and empty json' do
       make_request
 
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)).to eq({})
+      expect(Recommendations::NextUserFavouritesJob).to have_received(:perform_later).with(client.id.to_s)
     end
   end
 end
