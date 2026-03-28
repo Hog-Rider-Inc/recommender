@@ -6,4 +6,8 @@ module Openrouter
   def config
     @config ||= Openrouter::Configuration.new
   end
+
+  def client
+    Openrouter::Client.new
+  end
 end
