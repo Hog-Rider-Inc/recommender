@@ -61,7 +61,7 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
     it 'enqueues recommendations refresh on every 5th interaction' do
       allow(Recommendations::NextUserFavouritesJob).to receive(:perform_later)
 
-      3.times do |i|
+      4.times do |i|
         other_item = MenuItem.create!(restaurant: restaurant, name: "Dish X#{i}", description: 'd', price: 1.0)
         ClientItemInteraction.create!(client: client, menu_item: other_item, interaction: :like)
       end
