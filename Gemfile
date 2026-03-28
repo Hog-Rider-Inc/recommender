@@ -3,7 +3,8 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'rails', '~> 8.1.2'
+# NOTE: 8.1.2.1 includes the Active Storage DoS fix (CVE-2026-33658).
+gem 'rails', '~> 8.1.2.1'
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.5'
 # Use the Puma web server [https://github.com/puma/puma]
@@ -15,7 +16,10 @@ gem 'puma', '>= 5.0'
 # gem "bcrypt", "~> 3.1.7"
 
 # Security pins for transitive dependencies (bundler-audit)
+# NOTE: json/loofah pins address current advisories reported by bundler-audit.
 gem 'action_text-trix', '>= 2.1.17'
+gem 'json', '>= 2.19.2'
+gem 'loofah', '>= 2.25.1'
 gem 'nokogiri', '>= 1.19.1'
 gem 'rack', '>= 3.2.5'
 
