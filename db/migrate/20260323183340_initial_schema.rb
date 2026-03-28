@@ -96,7 +96,6 @@ class InitialSchema < ActiveRecord::Migration[8.1]
         CREATE TABLE `Orders` (
           `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
           `client_id` BIGINT UNSIGNED NOT NULL,
-          `restaurant_id` BIGINT UNSIGNED NOT NULL,
           `address_id` BIGINT UNSIGNED NOT NULL,
           `status` ENUM(
             'pending_acceptance',
@@ -310,10 +309,6 @@ class InitialSchema < ActiveRecord::Migration[8.1]
       <<~SQL,
         ALTER TABLE `ClientItemInteractions`
           ADD CONSTRAINT `clientiteminteractions_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `Clients` (`id`)
-      SQL
-      <<~SQL,
-        ALTER TABLE `Orders`
-          ADD CONSTRAINT `orders_restaurant_id_foreign` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`id`)
       SQL
       <<~SQL,
         ALTER TABLE `MenuItems`

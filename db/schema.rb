@@ -140,13 +140,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_183340) do
     t.bigint "address_id", null: false, unsigned: true
     t.bigint "client_id", null: false, unsigned: true
     t.datetime "created_at", null: false
-    t.bigint "restaurant_id", null: false, unsigned: true
     t.column "status", "enum('pending_acceptance','preparing','prepared','in_delivery','delivered','canceled')", default: "pending_acceptance", null: false
     t.decimal "total_price", precision: 8, scale: 2, null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "orders_address_id_foreign"
     t.index ["client_id"], name: "orders_client_id_foreign"
-    t.index ["restaurant_id"], name: "orders_restaurant_id_foreign"
     t.index ["status"], name: "orders_status_index"
   end
 
@@ -202,7 +200,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_183340) do
   add_foreign_key "OrderMenuItems", "Orders", column: "order_id", name: "ordermenuitems_order_id_foreign"
   add_foreign_key "Orders", "Address", column: "address_id", name: "orders_address_id_foreign"
   add_foreign_key "Orders", "Clients", column: "client_id", name: "orders_client_id_foreign"
-  add_foreign_key "Orders", "Restaurants", column: "restaurant_id", name: "orders_restaurant_id_foreign"
   add_foreign_key "RestaurantLogoImages", "Restaurants", column: "restaurant_id", name: "restaurantlogoimages_restaurant_id_foreign"
   add_foreign_key "Restaurants", "Accounts", column: "account_id", name: "restaurants_account_id_foreign"
   add_foreign_key "Restaurants", "Address", column: "address_id", name: "restaurants_address_id_foreign"
