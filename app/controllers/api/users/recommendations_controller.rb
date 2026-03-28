@@ -2,13 +2,7 @@
 
 class Api::Users::RecommendationsController < ApplicationController
   def index
-    ClientRecommendation.transaction do
-      recommendations.each_with_index do |rec, i|
-        rec.update_columns(updated_at: Time.current + i)
-      end
-    end
-
-    render json: recommendations.map { |rec| serialize_menu_item(rec.menu_item) }, status: :ok
+    render json: random_recommendations.map { |rec| serialize_menu_item(rec.menu_item) }, status: :ok
   end
 
   def create
@@ -42,7 +36,7 @@ class Api::Users::RecommendationsController < ApplicationController
     @client ||= Client.find(user_id)
   end
 
-  def recommendations
+  def random_recommendations
     @recommendations ||= ClientRecommendation
                          .includes(menu_item: [
                                      :categories,
@@ -50,7 +44,7 @@ class Api::Users::RecommendationsController < ApplicationController
                                      { restaurant: [], menu_item_images: [] }
                                    ])
                          .where(client_id: client.id)
-                         .order(updated_at: :desc, id: :desc)
+                         .order(Arel.sql('RAND()'))
                          .limit(3)
   end
 end
