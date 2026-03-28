@@ -37,14 +37,14 @@ class Api::Users::RecommendationsController < ApplicationController
   end
 
   def random_recommendations
-    @recommendations ||= ClientRecommendation
-                         .includes(menu_item: [
-                                     :categories,
-                                     :dietary_tags,
-                                     { restaurant: [], menu_item_images: [] }
-                                   ])
-                         .where(client_id: client.id)
-                         .order(Arel.sql('RAND()'))
-                         .limit(3)
+    @random_recommendations ||= ClientRecommendation
+                                .includes(menu_item: [
+                                            :categories,
+                                            :dietary_tags,
+                                            { restaurant: [], menu_item_images: [] }
+                                          ])
+                                .where(client_id: client.id)
+                                .order(Arel.sql('RAND()'))
+                                .limit(3)
   end
 end
