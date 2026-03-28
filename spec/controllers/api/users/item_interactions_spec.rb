@@ -57,6 +57,20 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
 
       expect(ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item_one.id)).to exist
     end
+
+    it 'enqueues recommendations refresh on every 5th interaction' do
+      allow(Recommendations::NextUserFavouritesJob).to receive(:perform_later)
+
+      3.times do |i|
+        other_item = MenuItem.create!(restaurant: restaurant, name: "Dish X#{i}", description: 'd', price: 1.0)
+        ClientItemInteraction.create!(client: client, menu_item: other_item, interaction: :like)
+      end
+
+      post path, headers: headers
+
+      expect(response).to have_http_status(:ok)
+      expect(Recommendations::NextUserFavouritesJob).to have_received(:perform_later).with(client.id.to_s)
+    end
   end
 
   describe 'POST /api/users/:user_id/recommendations/item_interactions/:menu_item_id/dislike' do
@@ -73,6 +87,20 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
       expect(interaction.interaction).to eq('dislike')
 
       expect(ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item_one.id)).not_to exist
+    end
+
+    it 'does not enqueue recommendations refresh when not 5th interaction' do
+      allow(Recommendations::NextUserFavouritesJob).to receive(:perform_later)
+
+      3.times do |i|
+        other_item = MenuItem.create!(restaurant: restaurant, name: "Dish Y#{i}", description: 'd', price: 1.0)
+        ClientItemInteraction.create!(client: client, menu_item: other_item, interaction: :like)
+      end
+
+      post path, headers: headers
+
+      expect(response).to have_http_status(:ok)
+      expect(Recommendations::NextUserFavouritesJob).not_to have_received(:perform_later)
     end
   end
 end
