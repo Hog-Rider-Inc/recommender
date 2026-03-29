@@ -16,8 +16,6 @@ class Api::Users::ItemInteractionsController < ApplicationController
     interaction.interaction = :like
     interaction.save!
 
-    ClientRecommendation.find_or_create_by!(client_id: client.id, menu_item_id: menu_item.id)
-
     enqueue_recommendations_refresh_if_needed!
 
     render json: {}, status: :ok
@@ -29,8 +27,6 @@ class Api::Users::ItemInteractionsController < ApplicationController
     interaction = ClientItemInteraction.find_or_initialize_by(client_id: client.id, menu_item_id: menu_item.id)
     interaction.interaction = :dislike
     interaction.save!
-
-    ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item.id).delete_all
 
     enqueue_recommendations_refresh_if_needed!
 

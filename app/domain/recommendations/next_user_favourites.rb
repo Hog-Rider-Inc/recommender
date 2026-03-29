@@ -10,7 +10,7 @@ module Recommendations
       - "existing_user_favourites": items the user has explicitly marked as favourites
       - "disliked_user_items": items the user has explicitly disliked
 
-      Your task is to pick up to 13 item IDs from "all_items" that the user is most likely to enjoy, based on patterns from "ordered_items" and "existing_user_favourites". Consider item names, descriptions, and prices to find similar or complementary items.
+      Your task is to pick up to 8 item IDs from "all_items" that the user is most likely to enjoy, based on patterns from "ordered_items" and "existing_user_favourites". Consider item names, descriptions, and prices to find similar or complementary items.
 
       Rules:
       - You MUST only pick IDs that exist in "all_items". Never invent or assume IDs.
@@ -36,11 +36,10 @@ module Recommendations
 
       content = extract_content(response_body)
       parse_ids(content)
-    rescue Error => e
-      if defined?(Rails) && defined?(response_body)
-        Rails.logger.warn(
-          "Openrouter raw response: #{response_body.inspect}"
-        )
+    rescue StandardError => e
+      if defined?(Rails)
+        Rails.logger.warn("[Recommendations::NextUserFavourites] error=#{e.class}: #{e.message}")
+        Rails.logger.warn("[Recommendations::NextUserFavourites] raw_response_on_error=#{response_body}")
       end
       raise Faraday::Error, "Invalid Openrouter response: #{e.message}"
     end
@@ -75,7 +74,9 @@ module Recommendations
     def parse_ids(content)
       ids = content.to_s.scan(/\b\d+\b/).map(&:to_i).uniq
 
-      ids.first(12) if ids.any?
+      Rails.logger.info("[Recommendations::NextUserFavourites] parsed_menu_item_ids=#{ids.inspect}") if defined?(Rails)
+
+      ids.first(8) if ids.any?
     end
   end
 end

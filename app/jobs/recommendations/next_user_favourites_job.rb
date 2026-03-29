@@ -8,11 +8,11 @@ module Recommendations
       return unless recommendations_enabled?
 
       client = Client.find(user_id)
-      recommended_menu_item_ids = next_user_favourites_for(client)
 
+      recommended_menu_item_ids = Array(next_user_favourites_for(client)).compact
       replace_client_recommendations!(client, recommended_menu_item_ids)
 
-      Rails.logger.info("Successful recommendation generation for user_id=#{user_id}.")
+      Rails.logger.info("Successful recommendation replacement for user_id=#{user_id}.")
     end
 
     private
@@ -62,18 +62,19 @@ module Recommendations
 
     def replace_client_recommendations!(client, recommended_menu_item_ids)
       ids = Array(recommended_menu_item_ids).map(&:to_i).uniq
-      ids = MenuItem.where(id: ids).pluck(:id) # keep only existing menu items
+      return if ids.empty?
+
+      ids = MenuItem.where(id: ids).pluck(:id)
+      return if ids.empty?
 
       ClientRecommendation.transaction do
         ClientRecommendation.where(client_id: client.id).delete_all
-
-        now = Time.current
-        ids.each_with_index do |menu_item_id, i|
+        ids.each do |menu_item_id|
           ClientRecommendation.create!(
             client_id: client.id,
             menu_item_id: menu_item_id,
-            created_at: now,
-            updated_at: now + i.seconds
+            created_at: Time.current,
+            updated_at: Time.current
           )
         end
       end

@@ -47,15 +47,13 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
   describe 'POST /api/users/:user_id/recommendations/item_interactions/:menu_item_id/like' do
     let(:path) { "/api/users/#{client.id}/recommendations/item_interactions/#{menu_item_one.id}/like" }
 
-    it 'stores like interaction and creates recommendation' do
+    it 'stores like interaction' do
       post path, headers: headers
 
       expect(response).to have_http_status(:ok)
 
       interaction = ClientItemInteraction.find_by!(client_id: client.id, menu_item_id: menu_item_one.id)
       expect(interaction.interaction).to eq('like')
-
-      expect(ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item_one.id)).to exist
     end
 
     it 'enqueues recommendations refresh on every 5th interaction' do
@@ -76,7 +74,7 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
   describe 'POST /api/users/:user_id/recommendations/item_interactions/:menu_item_id/dislike' do
     let(:path) { "/api/users/#{client.id}/recommendations/item_interactions/#{menu_item_one.id}/dislike" }
 
-    it 'stores dislike interaction and removes recommendation if present' do
+    it 'stores dislike interaction' do
       ClientRecommendation.create!(client: client, menu_item: menu_item_one)
 
       post path, headers: headers
@@ -86,7 +84,8 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
       interaction = ClientItemInteraction.find_by!(client_id: client.id, menu_item_id: menu_item_one.id)
       expect(interaction.interaction).to eq('dislike')
 
-      expect(ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item_one.id)).not_to exist
+      # recommendations are managed by the async refresh job, not here
+      expect(ClientRecommendation.where(client_id: client.id, menu_item_id: menu_item_one.id)).to exist
     end
 
     it 'does not enqueue recommendations refresh when not 5th interaction' do
