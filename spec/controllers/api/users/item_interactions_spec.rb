@@ -29,7 +29,8 @@ RSpec.describe Api::Users::ItemInteractionsController, type: :request do
 
       expect(response).to have_http_status(:ok)
       body = JSON.parse(response.body)
-      expect(body.keys.sort).to eq(%w[categories dietary_tags image_url menu_item_id price restaurant_name title])
+      expect(body.keys.sort).to eq(%w[categories description dietary_tags image_url menu_item_id price restaurant_name
+                                      title])
       expect([menu_item_one.id, menu_item_two.id]).to include(body.fetch('menu_item_id'))
     end
 
