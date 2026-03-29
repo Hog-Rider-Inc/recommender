@@ -60,7 +60,7 @@ module Recommendations
       items.map { |item| { id: item.id, name: item.name, description: item.description } }
     end
 
-    def replace_client_recommendations!(client, recommended_menu_item_ids)
+    def replace_client_recommendations!(client, recommended_menu_item_ids) # rubocop:disable Metrics/AbcSize
       return if recommended_menu_item_ids.empty?
 
       ids = Array(recommended_menu_item_ids).map(&:to_i).uniq

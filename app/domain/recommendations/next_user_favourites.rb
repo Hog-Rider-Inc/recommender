@@ -39,7 +39,7 @@ module Recommendations
     rescue StandardError => e
       if defined?(Rails)
         Rails.logger.warn("[Recommendations::NextUserFavourites] error=#{e.class}: #{e.message}")
-        Rails.logger.warn("[Recommendations::NextUserFavourites] raw_response_on_error=#{response_body.inspect}") if defined?(response_body)
+        Rails.logger.warn("[Recommendations::NextUserFavourites] raw_response_on_error=#{response_body}")
       end
       raise Faraday::Error, "Invalid Openrouter response: #{e.message}"
     end
