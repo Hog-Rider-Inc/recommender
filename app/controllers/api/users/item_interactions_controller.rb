@@ -10,7 +10,7 @@ class Api::Users::ItemInteractionsController < ApplicationController
   end
 
   def like
-    menu_item = MenuItem.find(params[:menu_item_id])
+    menu_item = MenuItem.find(menu_item_id)
 
     interaction = ClientItemInteraction.find_or_initialize_by(client_id: client.id, menu_item_id: menu_item.id)
     interaction.interaction = :like
@@ -22,7 +22,7 @@ class Api::Users::ItemInteractionsController < ApplicationController
   end
 
   def dislike
-    menu_item = MenuItem.find(params[:menu_item_id])
+    menu_item = MenuItem.find(menu_item_id)
 
     interaction = ClientItemInteraction.find_or_initialize_by(client_id: client.id, menu_item_id: menu_item.id)
     interaction.interaction = :dislike
@@ -39,6 +39,10 @@ class Api::Users::ItemInteractionsController < ApplicationController
     params[:user_id]
   end
 
+  def menu_item_id
+    params[:menu_item_id]
+  end
+
   def client
     @client ||= Client.find(user_id)
   end
@@ -50,8 +54,8 @@ class Api::Users::ItemInteractionsController < ApplicationController
     {
       menu_item_id: menu_item.id,
       title: menu_item.name,
+      description: menu_item.description,
       restaurant_name: restaurant&.name,
-      price: menu_item.price,
       image_url: image_url,
       categories: menu_item.categories.order(:title).pluck(:title),
       dietary_tags: menu_item.dietary_tags.order(:title).pluck(:title)
@@ -68,7 +72,6 @@ class Api::Users::ItemInteractionsController < ApplicationController
       .where.not(id: recommended_ids)
       .order(Arel.sql('RAND()'))
       .limit(1)
-      .first
   end
 
   def enqueue_recommendations_refresh_if_needed!

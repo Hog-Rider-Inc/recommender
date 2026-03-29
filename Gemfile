@@ -17,7 +17,7 @@ gem 'puma', '>= 5.0'
 
 # Security pins for transitive dependencies (bundler-audit)
 # NOTE: json/loofah pins address current advisories reported by bundler-audit.
-gem 'action_text-trix', '>= 2.1.17'
+gem 'action_text-trix', '>= 2.1.18'
 gem 'json', '>= 2.19.2'
 gem 'loofah', '>= 2.25.1'
 gem 'nokogiri', '>= 1.19.1'
