@@ -50,8 +50,8 @@ class Api::Users::ItemInteractionsController < ApplicationController
     {
       menu_item_id: menu_item.id,
       title: menu_item.name,
+      description: menu_item.description,
       restaurant_name: restaurant&.name,
-      price: menu_item.price,
       image_url: image_url,
       categories: menu_item.categories.order(:title).pluck(:title),
       dietary_tags: menu_item.dietary_tags.order(:title).pluck(:title)
