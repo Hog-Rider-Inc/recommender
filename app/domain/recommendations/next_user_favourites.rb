@@ -36,11 +36,10 @@ module Recommendations
 
       content = extract_content(response_body)
       parse_ids(content)
-    rescue Error => e
-      if defined?(Rails) && defined?(response_body)
-        Rails.logger.warn(
-          "Openrouter raw response: #{response_body.inspect}"
-        )
+    rescue StandardError => e
+      if defined?(Rails)
+        Rails.logger.warn("[Recommendations::NextUserFavourites] error=#{e.class}: #{e.message}")
+        Rails.logger.warn("[Recommendations::NextUserFavourites] raw_response_on_error=#{response_body.inspect}") if defined?(response_body)
       end
       raise Faraday::Error, "Invalid Openrouter response: #{e.message}"
     end
@@ -75,7 +74,9 @@ module Recommendations
     def parse_ids(content)
       ids = content.to_s.scan(/\b\d+\b/).map(&:to_i).uniq
 
-      ids.first(12) if ids.any?
+      Rails.logger.info("[Recommendations::NextUserFavourites] parsed_menu_item_ids=#{ids.inspect}") if defined?(Rails)
+
+      ids.first(13) if ids.any?
     end
   end
 end

@@ -12,7 +12,7 @@ module Recommendations
 
       replace_client_recommendations!(client, recommended_menu_item_ids)
 
-      Rails.logger.info("Successful recommendation generation for user_id=#{user_id}.")
+      Rails.logger.info("Successful recommendation replacement for user_id=#{user_id}.")
     end
 
     private
@@ -61,8 +61,10 @@ module Recommendations
     end
 
     def replace_client_recommendations!(client, recommended_menu_item_ids)
+      return if recommended_menu_item_ids.empty?
+
       ids = Array(recommended_menu_item_ids).map(&:to_i).uniq
-      ids = MenuItem.where(id: ids).pluck(:id) # keep only existing menu items
+      ids = MenuItem.where(id: ids).pluck(:id)
 
       ClientRecommendation.transaction do
         ClientRecommendation.where(client_id: client.id).delete_all
