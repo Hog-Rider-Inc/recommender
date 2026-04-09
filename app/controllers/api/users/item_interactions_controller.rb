@@ -62,7 +62,7 @@ class Api::Users::ItemInteractionsController < ApplicationController
     }
   end
 
-  def random_unseen_menu_item # rubocop:disable Metrics/AbcSize
+  def random_unseen_menu_item
     seen_ids = ClientItemInteraction.where(client_id: client.id).select(:menu_item_id)
     recommended_ids = ClientRecommendation.where(client_id: client.id).select(:menu_item_id)
 
@@ -71,11 +71,11 @@ class Api::Users::ItemInteractionsController < ApplicationController
       .where.not(id: seen_ids)
       .where.not(id: recommended_ids)
       .order(Arel.sql('RAND()'))
-      .limit(1)
+      .first
   end
 
   def enqueue_recommendations_refresh_if_needed!
-    return unless (ClientItemInteraction.where(client_id: client.id).count % 5).zero?
+    return unless (ClientItemInteraction.where(client_id: client.id).count % 11).zero?
 
     Recommendations::NextUserFavouritesJob.perform_later(user_id)
   end

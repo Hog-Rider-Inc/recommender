@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   namespace :api do
     resources :users, only: [] do
       resources :recommendations, only: %i[index create], controller: 'users/recommendations' do
+        delete :destroy, on: :member
+
         collection do
           resource :item_interactions, only: %i[show], controller: 'users/item_interactions' do
             post ':menu_item_id/like', action: :like, on: :collection
