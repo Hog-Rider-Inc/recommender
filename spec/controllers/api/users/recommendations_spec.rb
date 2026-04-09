@@ -17,6 +17,7 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
   end
 
   let!(:menu_item) { MenuItem.create!(restaurant: restaurant, name: 'Dish', description: 'd', price: 9.99) }
+  let!(:recommendation) { ClientRecommendation.create!(client: client, menu_item: menu_item) }
 
   let(:path) { "/api/users/#{client.id}/recommendations" }
   let(:headers) { { 'Authorization' => "Token token=#{API_KEY}" } }
@@ -30,8 +31,6 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
     end
 
     it 'returns only expected keys' do
-      ClientRecommendation.create!(client: client, menu_item: menu_item)
-
       make_request
 
       body = JSON.parse(response.body)
@@ -44,7 +43,6 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
       tag = DietaryTag.create!(title: 'Vegan')
       MenuItemCategory.create!(menu_item: menu_item, category: cat)
       MenuItemDietaryTag.create!(menu_item: menu_item, dietary_tag: tag)
-      ClientRecommendation.create!(client: client, menu_item: menu_item)
 
       make_request
 
@@ -67,6 +65,33 @@ RSpec.describe Api::Users::RecommendationsController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)).to eq({})
       expect(Recommendations::NextUserFavouritesJob).to have_received(:perform_later).with(client.id.to_s)
+    end
+  end
+
+  describe 'DELETE /api/users/:user_id/recommendations/:id' do
+    subject(:make_request) { delete delete_path, headers: headers }
+
+    let(:delete_path) { "/api/users/#{client.id}/recommendations/#{recommendation_id}" }
+
+    context 'when recommendation does exist' do
+      let(:recommendation_id) { recommendation.id }
+
+      it 'returns 204' do
+        make_request
+
+        expect(response).to have_http_status(:no_content)
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when recommendation does not exist' do
+      let(:recommendation_id) { recommendation.id + 999 }
+
+      it 'returns 404' do
+        make_request
+
+        expect(response).to have_http_status(:accepted)
+      end
     end
   end
 end

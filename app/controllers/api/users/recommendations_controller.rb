@@ -10,10 +10,27 @@ class Api::Users::RecommendationsController < ApplicationController
     render json: {}, status: :ok
   end
 
+  def destroy
+    recommendation = ClientRecommendation.find_by(id: recommendation_id, client_id: user_id)
+    return render json: {}, status: :accepted unless recommendation
+
+    ClientRecommendation.transaction do
+      recommendation.destroy!
+
+      ClientItemInteraction.where(client_id: user_id, menu_item_id: recommendation.menu_item_id).destroy_all
+    end
+
+    head :no_content
+  end
+
   private
 
   def user_id
     params[:user_id]
+  end
+
+  def recommendation_id
+    params[:id]
   end
 
   def serialize_menu_item(menu_item)
